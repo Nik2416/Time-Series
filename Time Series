@@ -1,1 +1,1326 @@
+Time Series — Complete Detailed Summary
 
+Since you're learning Machine Learning/Data Science, I'll explain time series from the basics all the way to forecasting and ML, in an easy way.
+
+1. What is a Time Series?
+
+A time series is a sequence of observations recorded over time, usually at regular intervals.
+
+Examples:
+
+Daily temperature
+Monthly sales
+Daily stock prices
+Hourly electricity consumption
+Monthly rainfall
+Number of website visitors per day
+Yearly population
+Daily number of passengers
+
+For example:
+
+Date	Sales
+Jan 1	100
+Jan 2	120
+Jan 3	115
+Jan 4	140
+Jan 5	150
+
+Here:
+
+Date → time variable
+Sales → value being observed
+
+The important thing is that the order of observations matters.
+
+In ordinary ML, we often assume rows are independent.
+
+In time series, this assumption usually doesn't hold.
+
+For example:
+
+Today's sales may depend on yesterday's sales.
+
+2. Time Series vs Normal Dataset
+
+Suppose you have:
+
+Age    Salary
+20     30000
+25     40000
+30     50000
+
+The order of rows isn't necessarily important.
+
+But consider:
+
+Date        Temperature
+Jan 1       20
+Jan 2       21
+Jan 3       23
+Jan 4       22
+
+The sequence is important because:
+
+Jan 1 → Jan 2 → Jan 3 → Jan 4
+
+The value at one point in time can contain information about future values.
+
+This is called temporal dependence.
+
+3. Main Components of a Time Series
+
+A time series is commonly thought of as containing four components:
+
+Trend
+Seasonality
+Cyclic behavior
+Irregular/random component
+
+Let's understand each.
+
+4. Trend
+
+A trend represents the long-term direction of the data.
+
+It tells us whether the series is generally:
+
+increasing
+decreasing
+relatively stable
+
+Example:
+
+Year     Sales
+
+2020     100
+2021     120
+2022     140
+2023     160
+2024     180
+
+The overall direction is upward.
+
+So:
+
+Trend = long-term movement of the series.
+
+A trend doesn't mean every individual observation increases.
+
+For example:
+
+100 → 110 → 105 → 130 → 125 → 150
+
+There are fluctuations, but the overall direction is upward.
+
+5. Seasonality
+
+Seasonality is a pattern that repeats at a fixed and known interval.
+
+Examples:
+
+Ice cream sales
+
+Sales may increase every summer.
+
+Summer → high
+Winter → low
+Summer → high
+Winter → low
+Retail
+
+Sales may increase every December because of holidays.
+
+Electricity
+
+Electricity consumption may follow a daily pattern:
+
+Morning → increase
+Afternoon → moderate
+Evening → high
+Night → low
+
+The important word is:
+
+Repeating
+
+If a pattern repeats every:
+
+day → daily seasonality
+week → weekly seasonality
+month → monthly seasonality
+year → yearly seasonality
+
+then we can call it seasonal.
+
+6. Cyclic Pattern
+
+A cycle is a long-term rise and fall that doesn't necessarily have a fixed period.
+
+This is different from seasonality.
+
+For example, economic activity may go through:
+
+Expansion
+   ↓
+Peak
+   ↓
+Decline
+   ↓
+Recovery
+   ↓
+Expansion
+
+The length of these cycles isn't necessarily fixed.
+
+Difference
+
+Seasonality:
+
+Repeats at a known/fixed interval.
+
+Cyclic behavior:
+
+Long-term fluctuations without a fixed period.
+
+7. Noise / Irregular Component
+
+Real-world data contains random fluctuations.
+
+Example:
+
+100
+105
+98
+103
+101
+110
+
+Some changes aren't explained by the main trend or seasonality.
+
+This is called:
+
+noise
+random component
+irregular component
+residual variation
+8. Decomposition
+
+We can think of a time series as being decomposed into components.
+
+Additive model
+Y = Trend + Seasonality + Noise
+
+or:
+
+Yt = Tt + St + Et
+
+where:
+
+Yt = observed value
+Tt = trend
+St = seasonal component
+Et = error/noise
+
+Additive decomposition is useful when the size of seasonal fluctuations stays approximately constant.
+
+Multiplicative model
+Y = Trend × Seasonality × Noise
+
+or:
+
+Yt = Tt × St × Et
+
+This is useful when seasonal fluctuations increase as the overall level increases.
+
+For example:
+
+Year 1:
+Sales = 100
+Seasonal variation = ±10
+
+Year 2:
+Sales = 200
+Seasonal variation = ±20
+
+The seasonal effect grows with the level of the series.
+
+9. Time Series Forecasting
+
+One of the main purposes of time series analysis is forecasting.
+
+Forecasting means:
+
+Using historical data to estimate future values.
+
+For example:
+
+January    100
+February   120
+March      130
+April      140
+May        ?
+
+We might use previous observations to predict May.
+
+Examples:
+
+Predict tomorrow's temperature
+Predict next month's sales
+Predict electricity demand
+Predict future website traffic
+Predict inventory requirements
+10. Time Series Plot
+
+The first thing you should usually do with time series data is plot it.
+
+For example:
+
+import matplotlib.pyplot as plt
+
+plt.plot(df['Date'], df['Sales'])
+
+plt.xlabel('Date')
+plt.ylabel('Sales')
+plt.title('Sales Over Time')
+
+plt.show()
+
+A line plot is particularly useful because the order of time is visible.
+
+Illustrative time series
+
+An example of observations changing over time.
+
+80
+100
+120
+140
+160
+Jan
+Feb
+Mar
+Apr
+May
+Jun
+11. Important Time Series Terms
+Timestamp
+
+A timestamp represents a particular point in time.
+
+Example:
+
+2026-10-02 10:30:00
+Frequency
+
+Frequency tells us how often observations are recorded.
+
+Examples:
+
+Hourly
+Daily
+Weekly
+Monthly
+Quarterly
+Yearly
+Lag
+
+A lag means a previous observation.
+
+Suppose:
+
+Day     Sales
+1       100
+2       120
+3       150
+4       130
+
+For Day 4:
+
+Lag 1 = Day 3 = 150
+Lag 2 = Day 2 = 120
+Lag 3 = Day 1 = 100
+
+So:
+
+df['lag_1'] = df['Sales'].shift(1)
+
+creates a column containing the previous day's sales.
+
+12. Why Lag Features Are Important
+
+Suppose you're trying to predict today's sales.
+
+Instead of only using other features, you can use:
+
+Yesterday's sales
+Sales two days ago
+Sales seven days ago
+
+For example:
+
+df['sales_lag_1'] = df['Sales'].shift(1)
+df['sales_lag_7'] = df['Sales'].shift(7)
+
+Now your ML model can use historical values.
+
+This is one of the most important ideas in time-series machine learning.
+
+13. Rolling / Moving Average
+
+A moving average calculates the average over a moving window.
+
+Suppose:
+
+Sales:
+
+100
+120
+140
+160
+180
+
+A 3-day moving average could be:
+
+(100 + 120 + 140) / 3 = 120
+
+(120 + 140 + 160) / 3 = 140
+
+(140 + 160 + 180) / 3 = 160
+
+In Pandas:
+
+df['rolling_mean'] = df['Sales'].rolling(window=3).mean()
+
+This helps smooth noisy data and reveal underlying patterns.
+
+14. Expanding Window
+
+An expanding window continuously includes more observations.
+
+For example:
+
+First observation → average of first observation
+
+Second → average of first 2
+
+Third → average of first 3
+
+Fourth → average of first 4
+
+In Pandas:
+
+df['expanding_mean'] = df['Sales'].expanding().mean()
+15. Autocorrelation
+
+This is a very important concept.
+
+Autocorrelation measures how related a time series is to its previous values.
+
+For example:
+
+Is today's sales value related to yesterday's sales?
+
+If yes, we have autocorrelation.
+
+For example:
+
+Sales today ↔ Sales yesterday
+Sales today ↔ Sales 7 days ago
+Sales today ↔ Sales 30 days ago
+
+Strong correlation at lag 7 could indicate weekly seasonality.
+
+16. ACF
+
+ACF = Autocorrelation Function
+
+ACF shows the correlation between the series and its lagged versions.
+
+For example:
+
+Lag 1 → correlation with previous observation
+Lag 2 → correlation with observation 2 periods ago
+Lag 3 → correlation with observation 3 periods ago
+...
+
+You can calculate it using:
+
+from statsmodels.graphics.tsaplots import plot_acf
+
+plot_acf(df['Sales'])
+plt.show()
+
+ACF is especially useful when working with models such as ARIMA.
+
+17. PACF
+
+PACF = Partial Autocorrelation Function
+
+PACF measures the relationship between the current observation and a particular lag after accounting for the effects of intermediate lags.
+
+In simple terms:
+
+ACF
+
+Looks at:
+
+How related are Yt and Yt-k?
+
+PACF
+
+Looks at:
+
+How directly related are Yt and Yt-k, after removing the effects of lags in between?
+
+PACF is particularly useful for choosing the AR order in ARIMA-type models.
+
+18. Stationarity
+
+This is one of the most important concepts in traditional time-series analysis.
+
+A time series is stationary when its statistical properties are relatively stable over time.
+
+Typically, we want things such as:
+
+mean to remain approximately constant
+variance to remain approximately constant
+autocorrelation structure to remain stable
+Non-stationary example
+100
+150
+200
+250
+300
+350
+
+The mean is changing because of the strong trend.
+
+Stationary-looking example
+102
+98
+101
+99
+103
+97
+100
+
+The values fluctuate around a relatively stable level.
+
+19. Why Stationarity Matters
+
+Some traditional forecasting models, especially ARIMA, are designed around stationary series or require transformations to achieve stationarity.
+
+If your data contains strong:
+
+trend
+changing variance
+other non-stationary behavior
+
+you may need to transform it before modeling.
+
+20. Differencing
+
+Differencing is a common way to remove trend and make a series more stationary.
+
+Formula:
+
+Y't = Yt - Yt-1
+
+Suppose:
+
+100
+120
+150
+170
+
+First differences:
+
+120 - 100 = 20
+150 - 120 = 30
+170 - 150 = 20
+
+So:
+
+20
+30
+20
+
+In Pandas:
+
+df['diff'] = df['Sales'].diff()
+21. First-Order Differencing
+
+This:
+
+df['Sales'].diff()
+
+is called first-order differencing.
+
+If the series still isn't stationary, sometimes second-order differencing can be considered:
+
+df['Sales'].diff().diff()
+
+However, excessive differencing can be harmful, so it should be used carefully.
+
+22. Seasonal Differencing
+
+Suppose you have monthly data with yearly seasonality.
+
+You might compare the current observation with the observation 12 months earlier:
+
+df['seasonal_diff'] = df['Sales'].diff(12)
+
+Formula:
+
+Yt - Yt-12
+
+This can help remove yearly seasonal patterns.
+
+23. Resampling
+
+Resampling means changing the frequency of your time-series data.
+
+Suppose you have daily data:
+
+Jan 1
+Jan 2
+Jan 3
+...
+
+You can convert it to monthly data.
+
+For example:
+
+df.resample('ME').mean()
+
+Depending on your Pandas version, you may also encounter older aliases such as 'M'.
+
+Examples of common frequencies include:
+
+D  → daily
+W  → weekly
+ME → month-end
+Q  → quarterly
+YE → year-end
+24. Datetime Conversion in Pandas
+
+Before working with dates, convert your date column to datetime:
+
+df['Date'] = pd.to_datetime(df['Date'])
+
+Then you can do things like:
+
+df['Year'] = df['Date'].dt.year
+df['Month'] = df['Date'].dt.month
+df['Day'] = df['Date'].dt.day
+df['DayOfWeek'] = df['Date'].dt.dayofweek
+
+You can also set it as the index:
+
+df.set_index('Date', inplace=True)
+
+Then:
+
+df['Sales'].plot()
+
+becomes very convenient.
+
+25. Train-Test Split in Time Series
+
+This is extremely important.
+
+In ordinary ML, you might randomly split:
+
+train_test_split(X, y)
+
+But for time series, random splitting can cause future information to enter the training set.
+
+That's called data leakage.
+
+Instead, preserve chronological order.
+
+Example:
+
+2019 → 2020 → 2021 → 2022 → 2023 → 2024
+
+You might use:
+
+Training:
+2019 → 2020 → 2021 → 2022 → 2023
+
+Testing:
+2024
+
+The model should learn from the past and be tested on the future.
+
+26. Time Series Cross-Validation
+
+Normal K-Fold cross-validation can be inappropriate for time series because it can mix future and past observations.
+
+Instead, we can use TimeSeriesSplit.
+
+from sklearn.model_selection import TimeSeriesSplit
+
+tscv = TimeSeriesSplit(n_splits=5)
+
+The idea is:
+
+Fold 1:
+Train: 1 2 3
+Test:       4
+
+Fold 2:
+Train: 1 2 3 4
+Test:         5
+
+Fold 3:
+Train: 1 2 3 4 5
+Test:           6
+
+The model always learns from observations that occurred before the validation observations.
+
+27. Forecasting Methods
+
+There are many ways to forecast time series.
+
+Some important approaches are:
+
+Simple methods
+Naive forecasting
+Seasonal naive forecasting
+Moving average
+Statistical models
+Exponential Smoothing
+Holt's method
+Holt-Winters
+AR
+MA
+ARMA
+ARIMA
+SARIMA
+Machine Learning
+Linear Regression
+Decision Trees
+Random Forest
+Gradient Boosting
+XGBoost
+LightGBM
+Deep Learning
+RNN
+LSTM
+GRU
+Transformers
+28. Naive Forecasting
+
+The simplest forecasting method:
+
+Assume the next value will be the same as the previous value.
+
+For example:
+
+Monday = 100
+Tuesday = 120
+Wednesday = 130
+
+Prediction for Thursday:
+
+130
+
+It sounds simple, but it provides a useful baseline.
+
+29. Seasonal Naive Forecasting
+
+If your data has seasonality, you can use the value from the previous season.
+
+For example, with weekly seasonality:
+
+Today's prediction = value from the same day last week.
+
+If:
+
+Monday last week = 100
+
+then:
+
+Monday this week prediction = 100
+
+This is another useful baseline.
+
+30. Moving Average Forecast
+
+A moving average predicts using the average of recent observations.
+
+For example:
+
+Last 3 sales:
+
+100
+120
+140
+
+Prediction:
+
+(100 + 120 + 140) / 3 = 120
+31. Exponential Smoothing
+
+Exponential smoothing gives more importance to recent observations.
+
+The general idea is:
+
+Recent data → more weight
+Older data → less weight
+
+This is useful when recent observations are more informative about the future.
+
+32. AR Model
+
+AR = Autoregressive
+
+An AR model predicts the current value using previous values.
+
+For example:
+
+Today's sales =
+    coefficient × yesterday's sales
+    + error
+
+An AR(p) model uses the previous p observations.
+
+For example:
+
+AR(1)
+
+uses one lag.
+
+AR(5)
+
+uses five lags.
+
+33. MA Model
+
+MA = Moving Average model
+
+Despite the name, this is different from simply calculating a moving average.
+
+An MA model uses previous forecast errors to help predict the current value.
+
+An MA(q) model uses the previous q error terms.
+
+34. ARMA
+
+ARMA combines:
+
+AR + MA
+
+So it uses:
+
+previous observations
+previous errors
+
+It is generally applied to stationary series.
+
+35. ARIMA
+
+ARIMA = AutoRegressive Integrated Moving Average
+
+It has three parameters:
+
+ARIMA(p, d, q)
+p → AR order
+
+Number of previous values used.
+
+d → Differencing
+
+Number of times the data is differenced to achieve stationarity.
+
+q → MA order
+
+Number of previous error terms used.
+
+Example:
+
+ARIMA(2,1,1)
+
+means:
+
+2 AR terms
+first-order differencing
+1 MA term
+36. SARIMA
+
+SARIMA = Seasonal ARIMA
+
+Used when the data has seasonality.
+
+It extends ARIMA with seasonal components.
+
+Often represented as:
+
+SARIMA(p,d,q)(P,D,Q,s)
+
+where:
+
+p,d,q → non-seasonal components
+P,D,Q → seasonal components
+s → seasonal period
+
+For monthly data with yearly seasonality:
+
+s = 12
+37. Machine Learning for Time Series
+
+You can also convert a time series into a supervised ML problem.
+
+Suppose:
+
+Day    Sales
+1      100
+2      120
+3      130
+4      150
+5      160
+
+Create lag features:
+
+Day    Lag1    Lag2    Sales
+3      120     100     130
+4      130     120     150
+5      150     130     160
+
+Now the problem becomes:
+
+X = [Lag1, Lag2]
+y = Sales
+
+Then you can use ML models.
+
+38. Feature Engineering for Time Series
+
+This is extremely important when using ML.
+
+Useful features include:
+
+Lag features
+df['lag_1'] = df['Sales'].shift(1)
+df['lag_7'] = df['Sales'].shift(7)
+df['lag_30'] = df['Sales'].shift(30)
+Rolling features
+df['rolling_7'] = df['Sales'].rolling(7).mean()
+Date features
+df['month'] = df.index.month
+df['day'] = df.index.day
+df['day_of_week'] = df.index.dayofweek
+
+You can also create:
+
+weekend indicator
+holiday indicator
+quarter
+week number
+year
+days since start
+seasonal indicators
+39. Forecast Horizon
+
+The forecast horizon means how far into the future you're predicting.
+
+Examples:
+
+One-step forecasting
+
+Predict:
+
+Tomorrow
+Multi-step forecasting
+
+Predict:
+
+Next 7 days
+
+or:
+
+Next 12 months
+
+The farther into the future you forecast, the more uncertainty generally accumulates.
+
+40. One-Step vs Multi-Step
+
+Suppose you have:
+
+Jan
+Feb
+Mar
+
+and want to predict:
+
+Apr
+May
+Jun
+One-step
+
+Predict April using known historical data.
+
+Then potentially use the newly predicted April value when forecasting May.
+
+Direct multi-step
+
+Build separate predictions for:
+
+April
+May
+June
+
+There are multiple strategies for multi-step forecasting.
+
+41. Forecast Evaluation
+
+After making predictions, you need to evaluate them.
+
+Common metrics include:
+
+MAE
+
+Mean Absolute Error
+
+MAE = average(|actual - predicted|)
+
+Easy to interpret.
+
+If:
+
+MAE = 10
+
+the average absolute prediction error is 10 units.
+
+MSE
+
+Mean Squared Error
+
+MSE = average((actual - predicted)²)
+
+Large errors are penalized more heavily.
+
+RMSE
+
+Root Mean Squared Error
+
+RMSE = √MSE
+
+It has the same units as the original target variable.
+
+MAPE
+
+Mean Absolute Percentage Error
+
+Measures error in percentage terms.
+
+However, MAPE can behave badly when actual values are zero or very close to zero.
+
+42. Prediction Intervals
+
+A forecast isn't always just:
+
+Tomorrow = 500
+
+You can also have uncertainty around the prediction.
+
+For example:
+
+Forecast = 500
+
+Prediction interval:
+450 – 550
+
+This communicates that the exact future value is uncertain.
+
+43. Data Leakage in Time Series
+
+This is one of the biggest mistakes beginners make.
+
+Suppose you're predicting:
+
+January 2025
+
+You must not accidentally use information from:
+
+February 2025
+
+during training.
+
+For example, calculating a feature using future observations can leak information.
+
+The fundamental rule is:
+
+When predicting time T, don't use information that would not have been available at time T.
+
+44. Missing Values
+
+Time series can contain missing dates or missing observations.
+
+Example:
+
+Jan 1 → 100
+Jan 2 → 120
+Jan 3 → NaN
+Jan 4 → 140
+
+Possible approaches include:
+
+forward fill
+backward fill
+interpolation
+domain-specific imputation
+
+For example:
+
+df['Sales'] = df['Sales'].ffill()
+
+But the appropriate method depends on the data and what the missing value represents.
+
+45. Outliers
+
+Time series can contain unusual observations.
+
+Example:
+
+100
+105
+102
+110
+500
+108
+
+500 might be an outlier.
+
+But be careful:
+
+An unusual value isn't automatically an error.
+
+It could represent a genuine event such as:
+
+holiday
+promotion
+pandemic
+system failure
+unusual weather
+major event
+
+So don't automatically remove every outlier.
+
+46. Seasonality vs Trend
+
+This distinction is very important.
+
+Trend
+
+Long-term direction:
+
+↗ ↗ ↗ ↗
+Seasonality
+
+Repeating pattern:
+
+↗ ↘ ↗ ↘ ↗ ↘
+
+Example:
+
+A company's sales might be increasing every year and have higher sales every December.
+
+Then you have:
+
+Trend + Seasonality
+47. Time Series Workflow
+
+A typical time-series project can follow this workflow:
+
+1. Understand the business problem
+           ↓
+2. Load the data
+           ↓
+3. Convert date column to datetime
+           ↓
+4. Sort by date
+           ↓
+5. Set date as index if appropriate
+           ↓
+6. Check missing values
+           ↓
+7. Visualize the series
+           ↓
+8. Identify trend
+           ↓
+9. Identify seasonality
+           ↓
+10. Check outliers
+           ↓
+11. Analyze autocorrelation
+           ↓
+12. Create train/test split chronologically
+           ↓
+13. Create baseline
+           ↓
+14. Feature engineering / transformation
+           ↓
+15. Train model
+           ↓
+16. Forecast
+           ↓
+17. Evaluate
+           ↓
+18. Tune model
+           ↓
+19. Forecast future values
+48. Example Using Pandas
+
+Suppose you have:
+
+import pandas as pd
+
+df = pd.read_csv("sales.csv")
+
+First:
+
+df['Date'] = pd.to_datetime(df['Date'])
+
+Sort:
+
+df = df.sort_values('Date')
+
+Set index:
+
+df.set_index('Date', inplace=True)
+
+Plot:
+
+df['Sales'].plot(figsize=(12, 5))
+plt.show()
+
+Create lag:
+
+df['lag_1'] = df['Sales'].shift(1)
+
+Create 7-day rolling mean:
+
+df['rolling_7'] = df['Sales'].rolling(7).mean()
+49. Time Series in Machine Learning
+
+There are two broad ways you will encounter time series.
+
+Traditional statistical forecasting
+
+Models directly designed around temporal structure:
+
+AR
+MA
+ARMA
+ARIMA
+SARIMA
+Exponential Smoothing
+Holt-Winters
+Machine Learning approach
+
+Convert the time series into features:
+
+Lag features
+Rolling statistics
+Calendar features
+External variables
+
+Then use models such as:
+
+Linear Regression
+Random Forest
+XGBoost
+LightGBM
+Neural Networks
+
+Neither approach is automatically appropriate for every dataset. The choice depends on the structure of the data, forecasting objective, available features, and evaluation setup.
+
+50. Time Series vs Regression
+
+This is a common interview question.
+
+Regression
+
+You might have:
+
+X → Age, Salary, Experience
+y → House Price
+
+Rows don't necessarily have a temporal order.
+
+Time Series
+
+You have:
+
+Past → Present → Future
+
+The ordering is essential.
+
+The model must respect the temporal structure.
+
+51. Most Important Concepts to Remember
+
+If you're studying this for ML, make sure you understand these particularly well:
+
+Concept	Meaning
+Time Series	Data observed over time
+Trend	Long-term direction
+Seasonality	Repeating pattern
+Cycle	Long-term non-fixed fluctuation
+Noise	Random variation
+Lag	Previous observation
+Rolling Mean	Average over a moving window
+Autocorrelation	Relationship with past values
+ACF	Correlation at different lags
+PACF	Direct correlation at different lags
+Stationarity	Stable statistical behavior over time
+Differencing	Subtracting previous values
+Forecasting	Predicting future values
+Forecast Horizon	How far into the future we predict
+Data Leakage	Using unavailable future information
+TimeSeriesSplit	Time-aware cross-validation
+52. The Big Picture
+
+Try to remember time series using this mental model:
+
+                 TIME SERIES
+                      │
+          ┌───────────┴───────────┐
+          ↓                       ↓
+      Understand                Predict
+          │                       │
+     ┌────┼────┐            ┌─────┼─────┐
+     ↓    ↓    ↓            ↓     ↓     ↓
+   Trend Seasonality       Statistical ML  DL
+     │    │                  │     │     │
+     │    │                ARIMA  RF/LR  LSTM
+     │    │                SARIMA XGB    GRU
+     │    │
+     └────┴──────────┐
+                     ↓
+              Feature Engineering
+                     │
+             ┌───────┼────────┐
+             ↓       ↓        ↓
+            Lag   Rolling   Date features
+If you're learning this for your ML journey, focus in this order:
+
+1. Understand what a time series is
+2. Learn trend and seasonality
+3. Learn datetime handling with Pandas
+4. Learn lag features
+5. Learn rolling statistics
+6. Understand train/test splitting without shuffling
+7. Learn autocorrelation, ACF and PACF
+8. Understand stationarity and differencing
+9. Learn forecasting baselines
+10. Learn ARIMA/SARIMA
+11. Learn ML-based forecasting
+12. Learn proper time-series evaluation and avoid leakage
+
+The most important idea to carry forward is this:
+
+Time-series data is different from ordinary tabular data because the order of observations contains information. When building a model, you must respect that order and make sure the model never gets information from the future that wouldn't have been available at prediction time.
